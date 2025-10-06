@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { Task } from './TasksList'
+import { EditTaskDetailModal } from './EditTaskDetailModal'
 import '../../styles/TaskDetails.css'
 
 interface TaskDetailsProps {
@@ -8,16 +9,19 @@ interface TaskDetailsProps {
   onStatusChange?: (newStatus: Task['status']) => void
   onDelete?: () => void
   onTaskIdChange?: (newId: string) => void
+  onTaskUpdate?: (updatedTask: Task) => void
 }
 
 export function TaskDetails({ 
   task, 
   onStatusChange, 
   onDelete,
-  onTaskIdChange
+  onTaskIdChange,
+  onTaskUpdate
 }: TaskDetailsProps) {
   const [inputId, setInputId] = useState('')
   const [debouncedInputId, setDebouncedInputId] = useState('')
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   // Debounce pour éviter trop d'appels lors de la frappe
   useEffect(() => {
@@ -94,8 +98,18 @@ export function TaskDetails({
   }
 
   const handleDelete = () => {
-    if (onDelete && window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+    if (onDelete && window.confirm('êtes-vous sûr de vouloir supprimer cette tâche ?')) {
       onDelete()
+    }
+  }
+
+  const handleEditTask = () => {
+    setIsEditModalOpen(true)
+  }
+
+  const handleTaskUpdated = (updatedTask: Task) => {
+    if (onTaskUpdate) {
+      onTaskUpdate(updatedTask)
     }
   }
 
@@ -243,7 +257,7 @@ export function TaskDetails({
 
           <button 
             className="action-button primary"
-            onClick={() => console.log('Modifier la tâche')}
+            onClick={handleEditTask}
           >
             Modifier la tâche
           </button>
@@ -263,6 +277,16 @@ export function TaskDetails({
           </button>
         </div>
       </div>
+
+      {/* Modal d'édition */}
+      {task && (
+        <EditTaskDetailModal
+          task={task}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onTaskUpdated={handleTaskUpdated}
+        />
+      )}
     </div>
   )
 }

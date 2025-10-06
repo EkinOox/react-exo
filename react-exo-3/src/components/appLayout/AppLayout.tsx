@@ -21,6 +21,8 @@ export function AppLayout() {
   useEffect(() => {
     if (debouncedTaskId.trim() && /^\d+$/.test(debouncedTaskId.trim())) {
       navigate(`/tasks/detail?id=${debouncedTaskId.trim()}`)
+      // Vider l'input après la navigation
+      setTaskId('')
     }
   }, [debouncedTaskId, navigate])
 

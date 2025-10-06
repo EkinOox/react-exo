@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth, type LoginCredentials } from '../components/auth/AuthContext'
+import { useErrorHandler } from '../hooks/useErrorHandler'
 import '../styles/Login.css'
 
 export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { login, isAuthenticated, loading: authLoading, error: authError, clearError } = useAuth()
+  const { handleApiError, clearErrors } = useErrorHandler()
   
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
@@ -25,7 +27,8 @@ export function LoginPage() {
   // Nettoyer les erreurs au montage
   useEffect(() => {
     clearError()
-  }, [clearError])
+    clearErrors()
+  }, [clearError, clearErrors])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,7 +36,9 @@ export function LoginPage() {
 
     try {
       await login(credentials)
-      // La redirection sera gérée par l'useEffect ci-dessus
+      // Redirection immédiate après login réussi
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/'
+      navigate(from, { replace: true })
     } catch {
       // L'erreur est déjà gérée par le Context
     } finally {

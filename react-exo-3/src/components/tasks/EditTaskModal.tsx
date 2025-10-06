@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Task } from '../../services/taskService'
-import './EditTaskModal.css'
+import '../../styles/EditTaskModal.css'
 
 interface EditTaskModalProps {
   task: Task

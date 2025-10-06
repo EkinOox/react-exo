@@ -2,6 +2,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { TaskDetails } from '../components/tasks/TasksDetails'
 import { taskService, type Task } from '../services/taskService'
+import { useAuth } from '../components/auth/AuthContext'
+import { useErrorHandler } from '../hooks/useErrorHandler'
 
 export function TaskDetailPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -9,6 +11,8 @@ export function TaskDetailPage() {
   const [task, setTask] = useState<Task | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { token } = useAuth()
+  const { taskError, handleApiError } = useErrorHandler()
   
   // Récupérer seulement l'ID depuis les paramètres de requête
   const id = searchParams.get('id')
@@ -27,6 +31,7 @@ export function TaskDetailPage() {
         setTask(apiTask)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erreur lors du chargement de la tâche')
+        handleApiError(err, 'TaskDetail')
         console.error('Erreur lors du chargement de la tâche:', err)
       } finally {
         setLoading(false)
@@ -34,40 +39,50 @@ export function TaskDetailPage() {
     }
 
     fetchTask()
-  }, [id])
+  }, [id, handleApiError])
 
   const handleStatusChange = async (newStatus: Task['status']) => {
-    if (!task) return
+    if (!task || !token) return
 
     try {
       // Mettre à jour localement d'abord
       const updatedTask = { ...task, status: newStatus }
       setTask(updatedTask)
 
-      // Puis appeler l'API
+      // Puis appeler l'API avec le nouveau status et le token d'authentification
       await taskService.updateTask(task.id, {
-        completed: newStatus === 'completed'
+        status: newStatus
+      }, {
+        Authorization: `Bearer ${token}`
       })
 
       console.log('Statut mis à jour:', newStatus)
     } catch (err) {
       console.error('Erreur lors de la mise à jour:', err)
+      handleApiError(err, 'TaskDetail - handleStatusChange')
       // Restaurer l'état précédent en cas d'erreur
       setTask(task)
     }
   }
 
   const handleDelete = async () => {
-    if (!task) return
+    if (!task || !token) return
 
     try {
-      await taskService.deleteTask(task.id)
+      await taskService.deleteTask(task.id, {
+        Authorization: `Bearer ${token}`
+      })
       console.log('Tâche supprimée:', task.id)
       navigate('/tasks/list')
     } catch (err) {
       console.error('Erreur lors de la suppression:', err)
+      handleApiError(err, 'TaskDetail - handleDelete')
       setError('Impossible de supprimer la tâche')
     }
+  }
+
+  const handleTaskUpdate = (updatedTask: Task) => {
+    setTask(updatedTask)
   }
 
   const handleTaskIdChange = (newId: string) => {
@@ -130,6 +145,7 @@ export function TaskDetailPage() {
       onStatusChange={handleStatusChange}
       onDelete={handleDelete}
       onTaskIdChange={handleTaskIdChange}
+      onTaskUpdate={handleTaskUpdate}
     />
   )
 }

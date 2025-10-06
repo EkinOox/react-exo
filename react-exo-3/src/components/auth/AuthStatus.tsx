@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext'
-import './AuthStatus.css'
+import '../../styles/AuthStatus.css'
 
 export function AuthStatus() {
   const navigate = useNavigate()

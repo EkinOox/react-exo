@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react'
 import axios from 'axios'
 
 const API_URL = 'http://localhost:3001'
@@ -175,23 +175,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkInitialAuth()
   }, [])
 
-  // Vérification périodique du token
-  useEffect(() => {
-    if (!state.isAuthenticated || !state.token) return
-
-    const checkTokenValidity = () => {
-      const user = decodeToken(state.token!)
-      if (!user) {
-        // Token expiré, déconnecter automatiquement
-        logout()
-      }
-    }
-
-    // Vérifier toutes les 30 secondes
-    const interval = setInterval(checkTokenValidity, 30000)
-    
-    return () => clearInterval(interval)
-  }, [state.isAuthenticated, state.token])
+  // Vérification périodique du token - SUPPRIMÉE pour éviter les boucles infinies
+  // La vérification se fera lors des appels API
 
   // Actions
   const login = async (credentials: LoginCredentials) => {
@@ -229,18 +214,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  const logout = () => {
+  const logout = useCallback(() => {
     removeTokenStorage()
     dispatch({ type: 'AUTH_LOGOUT' })
-  }
+  }, [])
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     dispatch({ type: 'AUTH_CLEAR_ERROR' })
-  }
+  }, [])
 
-  const getAuthHeaders = () => {
-    return state.token ? { Authorization: `Bearer ${state.token}` } : {}
-  }
+  const getAuthHeaders = useCallback(() => {
+    if (!state.token) return {}
+    
+    // Vérifier si le token est encore valide
+    const user = decodeToken(state.token)
+    if (!user) {
+      // Token expiré, déconnecter
+      removeTokenStorage()
+      dispatch({ type: 'AUTH_LOGOUT' })
+      return {}
+    }
+    
+    return { Authorization: `Bearer ${state.token}` }
+  }, [state.token])
 
   const contextValue: AuthContextType = {
     ...state,

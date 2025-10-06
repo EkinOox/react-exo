@@ -37,6 +37,7 @@ interface TaskMetadata {
   category: string
   createdAt: string
   dueDate?: string
+  status?: 'pending' | 'in-progress' | 'completed'
 }
 
 // Stockage local pour les métadonnées
@@ -79,7 +80,16 @@ export const transformApiTaskToTask = (apiTask: ApiTask): Task => {
     priority: 'medium' as const,
     category: 'général',
     createdAt: new Date().toISOString().split('T')[0],
-    dueDate: undefined
+    dueDate: undefined,
+    status: apiTask.completed ? 'completed' : 'pending' // Ajout du status dans les métadonnées
+  }
+
+  // Priorité au status dans les métadonnées s'il existe, sinon déduction de completed
+  let status: Task['status'] = 'pending'
+  if (taskMetadata.status) {
+    status = taskMetadata.status
+  } else if (apiTask.completed) {
+    status = 'completed'
   }
 
   return {
@@ -87,7 +97,7 @@ export const transformApiTaskToTask = (apiTask: ApiTask): Task => {
     title: apiTask.title,
     description: taskMetadata.description,
     priority: taskMetadata.priority,
-    status: apiTask.completed ? 'completed' : 'pending',
+    status: status,
     category: taskMetadata.category,
     createdAt: taskMetadata.createdAt,
     dueDate: taskMetadata.dueDate
@@ -144,7 +154,8 @@ export const taskService = {
       if (updates.description !== undefined || 
           updates.priority !== undefined || 
           updates.category !== undefined || 
-          updates.dueDate !== undefined) {
+          updates.dueDate !== undefined ||
+          updates.status !== undefined) {
         
         const currentMetadata = getMetadata()[id] || {
           description: '',
@@ -158,7 +169,8 @@ export const taskService = {
           ...(updates.description !== undefined && { description: updates.description }),
           ...(updates.priority !== undefined && { priority: updates.priority }),
           ...(updates.category !== undefined && { category: updates.category }),
-          ...(updates.dueDate !== undefined && { dueDate: updates.dueDate })
+          ...(updates.dueDate !== undefined && { dueDate: updates.dueDate }),
+          ...(updates.status !== undefined && { status: updates.status })
         }
 
         setMetadata(id, newMetadata)
