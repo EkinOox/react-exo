@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { TasksList as TasksListComponent } from '../components/tasks/TasksList'
 import { CreateTask } from '../components/tasks/CreateTask'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../components/auth/AuthContext'
 import { taskService, type Task } from '../services/taskService'
 import '../styles/TasksList.css'
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useAuth, type LoginCredentials } from '../context/AuthContext'
+import { useAuth, type LoginCredentials } from '../components/auth/AuthContext'
 import '../styles/Login.css'
 
 export function LoginPage() {
@@ -17,7 +17,7 @@ export function LoginPage() {
   // Rediriger si déjà connecté
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
-      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/tasks/list'
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/'
       navigate(from, { replace: true })
     }
   }, [isAuthenticated, authLoading, navigate, location])
