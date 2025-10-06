@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Task } from '../../services/taskService'
-import './DeleteTaskModal.css'
+import '../../styles/DeleteTaskModal.css'
 
 interface DeleteTaskModalProps {
   task: Task | null

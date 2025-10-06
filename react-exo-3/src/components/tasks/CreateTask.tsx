@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { taskService } from '../../services/taskService'
-import './CreateTask.css'
+import '../../styles/CreateTask.css'
 
 interface CreateTaskProps {
   onTaskCreated?: () => void

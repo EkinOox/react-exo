@@ -7,6 +7,7 @@ import { TasksLayout } from '../pages/tasks'
 import { TasksListPage } from '../pages/TasksList'
 import { TaskDetailPage } from '../pages/TaskDetail'
 import { NotFound } from '../pages/NotFound'
+import { AuthDebug } from '../components/debug/AuthDebug'
 
 export default function AppRoutes() {
   return (
@@ -59,6 +60,12 @@ export default function AppRoutes() {
         <Route path="tasks/:id" element={
           <ProtectedRoute>
             <TaskDetailPage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="debug" element={
+          <ProtectedRoute>
+            <AuthDebug />
           </ProtectedRoute>
         } />
         

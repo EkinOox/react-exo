@@ -1,28 +1,41 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { authService, type LoginCredentials } from '../services/authService'
-import './Login.css'
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuth, type LoginCredentials } from '../context/AuthContext'
+import '../styles/Login.css'
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { login, isAuthenticated, loading: authLoading, error: authError, clearError } = useAuth()
+  
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
     password: ''
   })
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
+  // Rediriger si déjà connecté
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/tasks/list'
+      navigate(from, { replace: true })
+    }
+  }, [isAuthenticated, authLoading, navigate, location])
+
+  // Nettoyer les erreurs au montage
+  useEffect(() => {
+    clearError()
+  }, [clearError])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
 
     try {
-      await authService.login(credentials)
-      // Rediriger vers la liste des tâches après connexion réussie
-      navigate('/tasks/list')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur de connexion')
+      await login(credentials)
+      // La redirection sera gérée par l'useEffect ci-dessus
+    } catch {
+      // L'erreur est déjà gérée par le Context
     } finally {
       setLoading(false)
     }
@@ -35,6 +48,24 @@ export function LoginPage() {
       ...prev,
       [field]: e.target.value
     }))
+  }
+
+  // Afficher un loading si on vérifie l'authentification
+  if (authLoading) {
+    return (
+      <div className="login-container">
+        <div className="login-card">
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '3rem', 
+            color: 'rgba(255, 255, 255, 0.8)' 
+          }}>
+            <h2>Vérification...</h2>
+            <p>Vérification de votre session</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -72,9 +103,9 @@ export function LoginPage() {
             />
           </div>
 
-          {error && (
+          {authError && (
             <div className="error-message">
-              {error}
+              {authError}
             </div>
           )}
 

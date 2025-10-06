@@ -1,50 +1,27 @@
-import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authService } from '../../services/authService'
+import { useAuth } from '../../context/AuthContext'
 import './AuthStatus.css'
 
 export function AuthStatus() {
   const navigate = useNavigate()
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [userEmail, setUserEmail] = useState<string | null>(null)
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const authenticated = authService.isAuthenticated()
-      setIsAuthenticated(authenticated)
-      
-      if (authenticated) {
-        const token = authService.getToken()
-        if (token) {
-          try {
-            const payload = JSON.parse(atob(token.split('.')[1]))
-            setUserEmail(payload.sub)
-          } catch (error) {
-            setUserEmail(null)
-          }
-        }
-      } else {
-        setUserEmail(null)
-      }
-    }
-
-    checkAuth()
-
-    // Vérifier le statut d'authentification périodiquement
-    const interval = setInterval(checkAuth, 30000)
-    
-    return () => clearInterval(interval)
-  }, [])
+  const { isAuthenticated, user, logout, loading } = useAuth()
 
   const handleLogout = () => {
-    authService.logout()
-    setIsAuthenticated(false)
-    setUserEmail(null)
+    logout()
     navigate('/login')
   }
 
   const handleLogin = () => {
     navigate('/login')
+  }
+
+  // Afficher un état de chargement pendant la vérification
+  if (loading) {
+    return (
+      <div className="auth-status">
+        <span className="auth-status-text">Vérification...</span>
+      </div>
+    )
   }
 
   if (!isAuthenticated) {
@@ -64,7 +41,7 @@ export function AuthStatus() {
   return (
     <div className="auth-status">
       <span className="auth-status-text">
-        Connecté en tant que <strong>{userEmail}</strong>
+        Connecté en tant que <strong>{user?.email}</strong>
       </span>
       <button 
         className="auth-button logout-button"
