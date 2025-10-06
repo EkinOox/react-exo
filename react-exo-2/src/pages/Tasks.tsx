@@ -7,9 +7,9 @@ export function TasksLayout() {
       <div className='tasks-card'>
         <h2>Mes Tâches</h2>
         <p>Gérez vos tâches avec élégance dans cette interface moderne. Organisez votre productivité avec style !</p>
-        <div className='tasks-actions'>
+                <div className='tasks-actions'>
           <Link to="/tasks/new" className='glass-button primary'>Créer une tâche</Link>
-          <button className='glass-button secondary'>Voir toutes</button>
+          <Link to="/tasks/list" className='glass-button secondary'>Voir toutes les tâches</Link>
         </div>
       </div>
     </div>
