@@ -1,0 +1,226 @@
+/* NotFound.css - Glassmorphism Design */
+
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 2rem;
+}
+
+.not-found-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.37),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  max-width: 600px;
+  width: 100%;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.not-found-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 119, 198, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.not-found-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 12px 40px rgba(31, 38, 135, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.error-code {
+  font-size: 8rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1rem;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #ff7ac6, #bf6ef0, #7ac7ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    filter: drop-shadow(0 0 10px rgba(255, 122, 198, 0.5));
+  }
+  to {
+    filter: drop-shadow(0 0 20px rgba(191, 110, 240, 0.8));
+  }
+}
+
+.not-found h2 {
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.not-found p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.not-found-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.glass-link-404 {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  padding: 0.8rem 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.glass-link-404::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.glass-link-404:hover::before {
+  left: 100%;
+}
+
+.glass-link-404:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.glass-link-404.primary {
+  background: rgba(120, 119, 198, 0.3);
+  border: 1px solid rgba(120, 119, 198, 0.5);
+}
+
+.glass-link-404.primary:hover {
+  background: rgba(120, 119, 198, 0.5);
+}
+
+.glass-link-404.secondary {
+  background: rgba(255, 119, 198, 0.3);
+  border: 1px solid rgba(255, 119, 198, 0.5);
+}
+
+.glass-link-404.secondary:hover {
+  background: rgba(255, 119, 198, 0.5);
+}
+
+/* Animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.not-found-card {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.error-code {
+  animation: fadeInUp 0.8s ease-out 0.2s both, glow 2s ease-in-out 1s infinite alternate;
+}
+
+.not-found h2 {
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.not-found p {
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+.not-found-actions {
+  animation: fadeInUp 0.8s ease-out 0.8s both;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .not-found {
+    padding: 1rem;
+    min-height: 60vh;
+  }
+  
+  .not-found-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .error-code {
+    font-size: 5rem;
+  }
+  
+  .not-found h2 {
+    font-size: 1.5rem;
+  }
+  
+  .not-found p {
+    font-size: 1.1rem;
+  }
+  
+  .not-found-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .glass-link-404 {
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+  }
+}
