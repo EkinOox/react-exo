@@ -1,4 +1,4 @@
-import { fetchUsers } from "../external/fetch";
+import { fetchProducts, fetchUsers } from "../external/fetch";
 import Image from "next/image";
 
 interface Product {
@@ -10,8 +10,8 @@ interface Product {
   };
 }
 
-export default async function UserList() {
-  const users = await fetchUsers();
+export default async function ProductList() {
+  const products = await fetchProducts();
 
   return (
     <div className="liquid-glass p-6 rounded-xl w-full">
@@ -19,7 +19,7 @@ export default async function UserList() {
         Liste des produits
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.products?.map((product: Product) => (
+        {products.products?.map((product: Product) => (
           <div key={product.code} className="liquid-glass p-4 rounded-lg text-center">
             <h3 className="font-semibold text-lg mb-2">{product.product_name || 'Produit sans nom'}</h3>
             <p className="text-sm opacity-70 mb-3">Code: {product.code}</p>

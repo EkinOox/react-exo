@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from 'next/link';
-import UserList from "./components/user"; 
+import ProductList from "./components/products"; 
 
 export default function Home() {
   return (
@@ -107,7 +107,7 @@ export default function Home() {
               <p className="text-sm opacity-80">Prêt pour le déploiement en un clic</p>
             </div>
           </div>
-          <UserList />
+          <ProductList />
         </main>
 
         {/* Footer */}
